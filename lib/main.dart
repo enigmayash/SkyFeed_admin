@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'SignUpPage.dart';
+import 'HomePage.dart';
 
 
 const amplifyconfig = '''{
@@ -62,7 +62,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   // initialize amplify
-  await _configureAmplify()
+  await _configureAmplify();
   runApp(MyApp());
 }
 
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget{
     
     return MaterialApp(
       title: "Sky Feed",
-      home: SignUpPage(),
+      home: HomePage(),
     );
   }
 }
