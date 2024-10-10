@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "videostreamingplatfo25fba1db": {}
+      },
+      "storage": {
+        "videoStorage": {}
       }
     }
   }

@@ -1,0 +1,14 @@
+{
+  "resourceName": "videoStorage",
+  "policyUUID": "95b76843",
+  "bucketName": "videostreamingplatfoe034e8a375554fa79789088f813",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

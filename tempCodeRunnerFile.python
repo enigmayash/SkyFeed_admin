@@ -1,0 +1,183 @@
+from collections import defaultdict, deque
+
+class NaryTree:
+    def __init__(self, total_nodes, branching_factor, labels):
+        self.total_nodes = total_nodes  # Total number of nodes in the tree
+        self.branching_factor = branching_factor  # The "N" in an N-ary tree
+        self.labels = labels  # List of node labels for easier identification
+
+        # Map each label to its corresponding index
+        self.label_to_index = {label: idx for idx, label in enumerate(labels)}
+        
+        # Set up parent-child relationships in the tree
+        self.parent = [-1] * total_nodes  # Parent for each node, -1 for root
+        self.children = [[] for _ in range(total_nodes)]  # Children for each node
+
+        for i in range(1, total_nodes):
+            # Calculate the parent of node i using the N-ary tree structure
+            self.parent[i] = (i - 1) // self.branching_factor
+            self.children[self.parent[i]].append(i)
+
+        # Track the lock state: 0 means unlocked, otherwise, it's the user ID who locked it
+        self.locked = [0] * total_nodes
+        
+        # Track the count of locked nodes in the subtree of each node
+        self.subtree_locked_count = [0] * total_nodes
+
+    def is_locked(self, node):
+        # Check if a node is locked (non-zero means locked)
+        return self.locked[node] != 0
+
+    def is_ancestor_locked(self, node):
+        # Check if any ancestor of the node is locked
+        current = self.parent[node]
+        while current != -1:
+            if self.is_locked(current):
+                return True
+            current = self.parent[current]
+        return False
+
+    def has_locked_descendants(self, node):
+        # Check if the node has any locked descendants
+        return self.subtree_locked_count[node] > (1 if self.is_locked(node) else 0)
+
+    def update_subtree_count(self, node, change):
+        # Update the count of locked nodes in the subtree, propagating upwards
+        while node != -1:
+            self.subtree_locked_count[node] += change
+            node = self.parent[node]
+
+    def lock_node(self, label, user_id):
+        if label not in self.label_to_index:
+            return False
+        node = self.label_to_index[label]
+        
+        if self.is_locked(node) or self.is_ancestor_locked(node) or self.has_locked_descendants(node):
+            return False
+        
+        # Lock the node
+        self.locked[node] = user_id
+        self.update_subtree_count(node, 1)
+       
+        return True
+
+    def unlock_node(self, label, user_id):
+        # Unlock a node if it was locked by the same user
+        if label not in self.label_to_index:
+            return False
+        
+        node = self.label_to_index[label]
+
+        if self.locked[node] != user_id:
+            return False
+
+        # Unlock the node and update the locked node count in its subtree
+        self.locked[node] = 0
+        self.update_subtree_count(node, -1)
+        return True
+
+    def upgrade_node(self, label, user_id):
+        # Upgrade a node if it is not locked, no ancestor is locked, and it has locked descendants
+        if label not in self.label_to_index:
+            return False
+
+        node = self.label_to_index[label]
+
+        if self.is_locked(node):
+            return False
+        if self.is_ancestor_locked(node):
+            return False
+        if not self.has_locked_descendants(node):
+            return False
+
+        # Collect all descendants locked by the same user
+        locked_descendants = []
+        if not self.collect_locked_descendants(node, user_id, locked_descendants):
+            return False
+
+        # Unlock all descendants that were locked by the same user
+        for descendant in locked_descendants:
+            self.locked[descendant] = 0
+            self.update_subtree_count(descendant, -1)
+
+        # Finally, lock the current node
+        self.locked[node] = user_id
+        self.update_subtree_count(node, 1)
+        return True
+
+    def collect_locked_descendants(self, node, user_id, locked_nodes):
+        # Collect all descendants of the node that are locked by the same user
+        stack = [node]
+        while stack:
+            current_node = stack.pop()
+            
+            # If a node is locked and the locking user doesn't match, fail
+            if self.is_locked(current_node):
+                if self.locked[current_node] != user_id:
+                    return False
+                locked_nodes.append(current_node)
+
+            # Traverse to the children of the current node
+            for child in self.get_children(current_node):
+                stack.append(child)
+
+        # If no locked nodes were found, upgrade is not possible
+        if not locked_nodes:
+            return False
+        return True
+
+def main():
+    import sys
+
+    input_data = sys.stdin.read().splitlines()
+    idx = 0
+
+    # Read the number of nodes in the tree
+    total_nodes = int(input_data[idx].strip())
+    idx += 1
+
+    # Read the N-ary factor
+    branching_factor = int(input_data[idx].strip())
+    idx += 1
+
+    # Read the number of queries
+    total_queries = int(input_data[idx].strip())
+    idx += 1
+
+    # Read the labels for each node
+    labels = []
+    for _ in range(total_nodes):
+        labels.append(input_data[idx].strip())
+        idx += 1
+
+    # Initialize the tree
+    tree = NaryTree(total_nodes, branching_factor, labels)
+
+    # Process each query
+    for _ in range(total_queries):
+        query = input_data[idx].strip().split()
+        idx += 1
+
+        # Parse the operation and inputs
+        if len(query) != 3:
+            print("false")
+            continue
+
+        operation, label, user_id_str = query
+        user_id = int(user_id_str)
+
+        # Perform the corresponding operation
+        if operation == '1':  # Lock the node
+            result = tree.lock_node(label, user_id)
+            print("true" if result else "false")
+        elif operation == '2':  # Unlock the node
+            result = tree.unlock_node(label, user_id)
+            print("true" if result else "false")
+        elif operation == '3':  # Upgrade the node
+            result = tree.upgrade_node(label, user_id)
+            print("true" if result else "false")
+        else:
+            print("false")
+
+if __name__ == "__main__":
+    main()
