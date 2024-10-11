@@ -14,20 +14,28 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordController = TextEditingController();
   Future<void> _signUp() async {
     try {
-      Map<CognitoUserAttributeKey, String> userAttributes = {
-        CognitoUserAttributeKey.email: _emailController.text
+      final userAttributes = <CognitoUserAttributeKey, String>{
+        CognitoUserAttributeKey.email: _emailController.text,
       };
-      SignUpResult result = await Amplify.Auth.signUp(
+      final result = await Amplify.Auth.signUp(
         username: _emailController.text,
         password: _passwordController.text,
-        options: CognitoSignUpOptions(userAttributes: userAttributes),
+        options: SignUpOptions(userAttributes: userAttributes),
       );
       if (result.isSignUpComplete) {
-        print("sign Up complete");
+        print("Sign up complete");
+        // Consider navigating to a success page instead of popping
+        Navigator.pop(context);
+      } else {
+        print("Sign up requires confirmation");
+        // TODO: Navigate to confirmation page
       }
-      Navigator.pop(context);
-    } catch (e) {
-      print("sign up failed");
+    } on AuthException catch (e) {
+      print("Sign up failed: ${e.message}");
+      // Show error message to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign up failed: ${e.message}')),
+      );
     }
   }
 

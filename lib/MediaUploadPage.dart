@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+// import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
@@ -22,25 +22,39 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
     }
   }
 
-  Future<void> _uploadMedia() async{
-    if(_mediaFile == null) return;
-    try{
-      String mediaName = _mediaFile!.path.split('/').last;
-      S3UploadFileOptions options = S3UploadFileOptions(
-        accessLevel: StorageAccessLevel.private,
-      );
-      await Amplify.Storage.uploadFile(
-        local: _mediaFile!,
-        key: mediaName,
-        options: options,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Media Uploaded succesfully")),);
-    }
-    catch (e){
-      print('upload falied: $e');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Media Uploaded Failed")),);
-    }
+  Future<void> uploadFile() async {
+  // Select a file from the device
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    withData: false,
+    // Ensure to get file stream for better performance
+    withReadStream: true,
+    allowedExtensions: ['jpg', 'png', 'gif', 'mp4'],
+  );
+
+  if (result == null) {
+    safePrint('No file selected');
+    return;
   }
+
+  // Upload file using the filename
+  final platformFile = result.files.single;
+  try {
+    final result = await Amplify.Storage.uploadFile(
+      localFile: AWSFile.fromStream(
+        platformFile.readStream!,
+        size: platformFile.size,
+      ),
+      path: StoragePath.fromString('public/${platformFile.name}'),
+      onProgress: (progress) {
+        safePrint('Fraction completed: ${progress.fractionCompleted}');
+      },
+    ).result;
+    safePrint('Successfully uploaded file: ${result.uploadedItem.path}');
+  } on StorageException catch (e) {
+    safePrint(e.message);
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +73,7 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
             ),
             if (_mediaFile != null)
               ElevatedButton(
-                onPressed: _uploadMedia,
+                onPressed: uploadFile,
                 child: const Text('Upload Media'),
               ),
           ],

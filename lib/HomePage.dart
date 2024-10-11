@@ -14,8 +14,7 @@ class HomePage extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(
-                    'libImages\retro-world-theatre-day-scenes-with-curtains-stage.jpg'), // Replace with your provided image link
+                image: AssetImage('assets/background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),

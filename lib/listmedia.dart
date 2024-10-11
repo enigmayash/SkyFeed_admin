@@ -22,25 +22,19 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
 
   Future<void> _fetchUploadedMedia() async {
     try {
-      ListResult result = await Amplify.Storage.list();
-      List<String> mediaURLs = [];
-      for (StorageItem item in result.items) {
-        GetUrlResult urlResult = await Amplify.Storage.getUrl(
-          key: item.key,
-          options: S3GetUrlOptions(accessLevel: StorageAccessLevel.private),
-        );
-        mediaURLs.add(urlResult.url);
-      }
-      setState(() {
-        _mediaURLs = mediaURLs;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print("error fecthing media $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch media')),
-      );
-    }
+    final result = await Amplify.Storage.getUrl(
+      path: const StoragePath.fromString('public/example.txt'),
+      options: const StorageGetUrlOptions(
+        pluginOptions: S3GetUrlPluginOptions(
+          validateObjectExistence: true,
+          expiresIn: Duration(days: 1),
+        ),
+      ),
+    ).result;
+    safePrint('url: ${result.url}');
+  } on StorageException catch (e) {
+    safePrint(e.message);
+  }
   }
 
   @override
