@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'HomePage.dart';
-
+import 'SignInPage.dart';
+import 'SignUpPage.dart';
 
 const amplifyconfig = '''{
     "UserAgent": "aws-amplify-cli/2.0",
@@ -58,33 +59,43 @@ const amplifyconfig = '''{
     }
 }''';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // initialize amplify
   await _configureAmplify();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-Future<void> _configureAmplify() async{
-  try{
+Future<void> _configureAmplify() async {
+  try {
     // Adding cognito plugins to authentiicate
     Amplify.addPlugin(AmplifyAuthCognito());
 
     // confugure Amplify
     await Amplify.configure(amplifyconfig);
-  }
-  catch(e){
+  } catch (e) {
     print('Errorrrrrrrrrr: $e');
   }
 }
-class MyApp extends StatelessWidget{
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
-      title: "Sky Feed",
-      home: HomePage(),
+      title: 'SkyFeed',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      // Define your routes here
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(), // Home page route
+        '/SignInPage': (context) => SignInPage(), // Sign In page route
+        '/SignUpPage': (context) => SignUpPage(), // Sign Up page route
+      },
     );
   }
 }

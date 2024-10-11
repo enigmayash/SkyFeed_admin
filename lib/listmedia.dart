@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'MediaPlayerPage.dart';
 
 class ListmediaUploadPage extends StatefulWidget {
   const ListmediaUploadPage({super.key});
@@ -56,10 +57,17 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
                   itemCount: _mediaURLs.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text('Video ${index + 1}'),
+                      title: Text('Media ${index + 1}'),
                       subtitle: Text(_mediaURLs[index]),
                       onTap: () {
-                        // Add video playback or open video URL logic here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Mediaplayerpage(
+                              videoUrl: _mediaURLs[index],
+                            ),
+                          ),
+                        );
                       },
                     );
                   },

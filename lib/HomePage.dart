@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+// import 'SignInPage.dart';
+// import 'SignUpPage.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,16 +12,17 @@ class HomePage extends StatelessWidget {
         children: [
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage('lib\Images\retro-world-theatre-day-scenes-with-curtains-stage.jpg'), // Replace with your provided image link
+                image: NetworkImage(
+                    'libImages\retro-world-theatre-day-scenes-with-curtains-stage.jpg'), // Replace with your provided image link
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          
+
           // App Name in the center
-          Center(
+          const Center(
             child: Text(
               'SkyFeed',
               style: TextStyle(
@@ -44,20 +49,22 @@ class HomePage extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Navigate to Sign In page
-                    Navigator.pushNamed(context, '/SignInPage'); // Replace with your sign-in page route
+                    Navigator.pushNamed(context,
+                        '/SignInPage'); // Replace with your sign-in page route
                   },
-                  child: Text(
+                  child: const Text(
                     'Sign In',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 TextButton(
                   onPressed: () {
                     // Navigate to Sign Up page
-                    Navigator.pushNamed(context, '/SignUpPage'); // Replace with your sign-up page route
+                    Navigator.pushNamed(context,
+                        '/SignUpPage'); // Replace with your sign-up page route
                   },
-                  child: Text(
+                  child: const Text(
                     'Sign Up',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),

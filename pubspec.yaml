@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    assets: D:\Projects\video_streaming_platform\lib\Images\retro-world-theatre-day-scenes-with-curtains-stage.jpg
 
 
   # The following adds the Cupertino Icons font to your application.

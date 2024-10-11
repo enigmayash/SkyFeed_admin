@@ -12,7 +12,7 @@ class Mediaplayerpage extends StatefulWidget {
 class _MediaplayerpageState extends State<Mediaplayerpage> {
   late VideoPlayerController _controller;
   bool _isPlaying = false;
-  final bool _isLoading = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -20,10 +20,10 @@ class _MediaplayerpageState extends State<Mediaplayerpage> {
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         setState(() {
-          _isPlaying = false;
+          _isLoading=false;
+          _isPlaying = true;
         });
         _controller.play();
-        _isPlaying = true;
       });
   }
 
