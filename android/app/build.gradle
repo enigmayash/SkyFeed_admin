@@ -1,28 +1,44 @@
-// android/build.gradle
-buildscript {
-    ext {
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
-        kotlin_version = '1.7.0'  // Kotlin version
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.example.video_streaming_platform"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    repositories {
-        google()
-        mavenCentral()
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
-    dependencies {
-        // Correctly place the Android Gradle Plugin classpath
-        classpath 'com.android.tools.build:gradle:7.4.2'  // Use the latest version
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0'  // Kotlin plugin
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.example.video_streaming_platform"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.debug
+        }
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+flutter {
+    source = "../.."
 }

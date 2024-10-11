@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 class MediaUploadPage extends StatefulWidget{
+  const MediaUploadPage({super.key});
+
   @override 
   _MediaUploadPageState createState() => _MediaUploadPageState();
 }
@@ -32,18 +34,18 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
         key: mediaName,
         options: options,
       );
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Media Uploaded succesfully")),);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Media Uploaded succesfully")),);
     }
     catch (e){
       print('upload falied: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Media Uploaded Failed")),);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Media Uploaded Failed")),);
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Media'),
+        title: const Text('Upload Media'),
       ),
       body: Center(
         child: Column(
@@ -53,12 +55,12 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
               Text('Media Selected: ${_mediaFile?.path.split('/').last}'),
             ElevatedButton(
               onPressed: _pickmedia,
-              child: Text('Pick Media'),
+              child: const Text('Pick Media'),
             ),
             if (_mediaFile != null)
               ElevatedButton(
                 onPressed: _uploadMedia,
-                child: Text('Upload Media'),
+                child: const Text('Upload Media'),
               ),
           ],
         ),

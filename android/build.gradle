@@ -1,44 +1,18 @@
-// android/app/build.gradle
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-    id "org.jetbrains.kotlin.android" version "2.0.0" apply false    
-}
-
-android {
-    namespace = "com.example.video_streaming_platform"
-    compileSdk = 33
-
-    defaultConfig {
-        applicationId = "com.example.video_streaming_platform"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
-    }
-
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.debug
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
 }
 
-flutter {
-    source = "../.."
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
 }

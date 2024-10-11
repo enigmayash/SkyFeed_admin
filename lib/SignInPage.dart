@@ -4,6 +4,8 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'HomePage.dart';
 
 class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -24,7 +26,7 @@ class _SignInPageState extends State<SignInPage> {
       if (result.isSignedIn) {
         print("signIn Complete");
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => const HomePage()));
       } else {
         print("signIn not complete");
       }
@@ -36,25 +38,25 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign In')),
+      appBar: AppBar(title: const Text('Sign In')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _signIn,
-              child: Text('Sign In'),
+              child: const Text('Sign In'),
             ),
           ],
         ),
