@@ -65,8 +65,6 @@ const amplifyconfig = '''{
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // initialize amplify
   await _configureAmplify();
   runApp(const MyApp());
 }
@@ -115,7 +113,7 @@ Future<void> _configureAmplify() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +123,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routerConfig: _router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

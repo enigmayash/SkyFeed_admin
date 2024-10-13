@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-// import 'SignInPage.dart';
-// import 'SignUpPage.dart';
-// import 'MediaUploadPage.dart';
-// import 'listmedia.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,7 +49,7 @@ class _HomePageState extends State<HomePage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/background.jpg'),
+                image: AssetImage('assets/images/background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -66,7 +62,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: Colors.red,
+                color: Colors.blue,
                 shadows: [
                   Shadow(
                     blurRadius: 10.0,
@@ -118,7 +114,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => context.go('/signin'),
           child: const Text(
             'Sign In',
-            style: TextStyle(color: Color.fromARGB(255, 10, 0, 0), fontSize: 18),
+            style: TextStyle(color: Color.fromARGB(255, 239, 234, 234), fontSize: 18),
           ),
         ),
         const SizedBox(width: 10),
@@ -126,7 +122,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => context.go('/signup'),
           child: const Text(
             'Sign Up',
-            style: TextStyle(color: Color.fromARGB(255, 10, 0, 0), fontSize: 18),
+            style: TextStyle(color: Color.fromARGB(255, 239, 234, 234), fontSize: 18),
           ),
         ),
       ],

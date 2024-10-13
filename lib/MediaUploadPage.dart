@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class MediaUploadPage extends StatefulWidget{
   const MediaUploadPage({super.key});
@@ -59,27 +60,83 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload Media'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (_mediaFile != null)
-              Text('Media Selected: ${_mediaFile?.path.split('/').last}'),
-            ElevatedButton(
-              onPressed: _pickmedia,
-              child: const Text('Pick Media'),
-            ),
-            if (_mediaFile != null)
-              ElevatedButton(
-                onPressed: uploadFile,
-                child: const Text('Upload Media'),
-              ),
-          ],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');  // Navigate to home if can't pop
+            }
+          },
         ),
+      ),
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          
+          // App Name (top left) and Page Name (top right)
+          const Positioned(
+            top: 40,
+            left: 20,
+            right: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:  [
+                Text(
+                  'SkyFeed',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+                Text(
+                  'Upload Media',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Main content
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (_mediaFile != null)
+                  Text(
+                    'Media Selected: ${_mediaFile?.path.split('/').last}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ElevatedButton(
+                  onPressed: _pickmedia,
+                  child: const Text('Pick Media'),
+                ),
+                if (_mediaFile != null)
+                  ElevatedButton(
+                    onPressed: uploadFile,
+                    child: const Text('Upload Media'),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
- 
