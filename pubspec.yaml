@@ -40,6 +40,9 @@ dependencies:
   amplify_storage_s3: ^2.4.1
   file_picker: ^8.0.0
   video_player: ^2.9.2
+  go_router: ^14.3.0
+  amazon_cognito_identity_dart_2: ^3.6.5 
+
 
 dev_dependencies:
   flutter_test:

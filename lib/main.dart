@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'HomePage.dart';
 import 'SignInPage.dart';
 import 'SignUpPage.dart';
+import 'ConfirmSignUpPage.dart';
+import 'MediaUploadPage.dart';
+import 'listmedia.dart';
 
 const amplifyconfig = '''{
     "UserAgent": "aws-amplify-cli/2.0",
@@ -67,15 +71,46 @@ void main() async {
   runApp(const MyApp());
 }
 
-Future<void> _configureAmplify() async {
-  try {
-    // Adding cognito plugins to authentiicate
-    Amplify.addPlugin(AmplifyAuthCognito());
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: '/signin',
+      builder: (context, state) => const SignInPage(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignUpPage(),
+    ),
+    GoRoute(
+      path: '/confirm-signup',
+      builder: (context, state) {
+        final username = state.uri.queryParameters['username'] ?? '';
+        return ConfirmSignUpPage(username: username);
+      },
+    ),
+    GoRoute(
+      path: '/upload-media',
+      builder: (context, state) => const MediaUploadPage(),
+    ),
+    GoRoute(
+      path: '/list-media',
+      builder: (context, state) => const ListmediaUploadPage(),
+    ),
+  ],
+);
 
-    // confugure Amplify
+Future<void> _configureAmplify() async {
+  final auth = AmplifyAuthCognito();
+  await Amplify.addPlugin(auth);
+
+  try {
     await Amplify.configure(amplifyconfig);
-  } catch (e) {
-    print('Errorrrrrrrrrr: $e');
+  } on Exception catch (e) {
+    print('Error configuring Amplify: $e');
   }
 }
 
@@ -84,18 +119,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'SkyFeed',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // Define your routes here
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const HomePage(), // Home page route
-        '/SignInPage': (context) => SignInPage(), // Sign In page route
-        '/SignUpPage': (context) => SignUpPage(), // Sign Up page route
-      },
+      routerConfig: _router,
     );
   }
 }

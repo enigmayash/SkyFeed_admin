@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'HomePage.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -16,22 +15,25 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _signIn() async {
     try {
-      Map<CognitoUserAttributeKey, String> userAttributes = {
-        CognitoUserAttributeKey.email: _emailController.text
-      };
-      SignInResult result = await Amplify.Auth.signIn(
-        username: _emailController.text,
-        password: _passwordController.text,
+      final result = await Amplify.Auth.signIn(
+        username: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
+
       if (result.isSignedIn) {
-        print("signIn Complete");
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
-      } else {
-        print("signIn not complete");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sign in successful!')),
+          );
+          context.go('/'); // Redirect to home page
+        }
       }
-    } catch (e) {
-      print("signIn failed: $e ");
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign in error: ${e.message}')),
+        );
+      }
     }
   }
 
