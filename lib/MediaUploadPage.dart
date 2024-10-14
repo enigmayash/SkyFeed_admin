@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-// import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:aws_common/aws_common.dart';
+import 'package:file_picker/file_picker.dart';
+
 
 class MediaUploadPage extends StatefulWidget{
   const MediaUploadPage({super.key});
@@ -13,49 +13,54 @@ class MediaUploadPage extends StatefulWidget{
   _MediaUploadPageState createState() => _MediaUploadPageState();
 }
 class _MediaUploadPageState extends State<MediaUploadPage>{
-  File? _mediaFile;
-  Future<void> _pickmedia() async{
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.media,);
-    if(result != null && result.files.single.path != null){
+  bool _isUploading = false;
+  String _uploadStatus = '';
+  String? _uploadedFileKey;
+
+  Future<void> _uploadMedia() async {
+    try {
+      // Pick a file
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      if (result == null || result.files.single.path == null) {
+        setState(() {
+          _uploadStatus = 'No file selected';
+        });
+        return;
+      }
+
       setState(() {
-        _mediaFile = File(result.files.single.path!);
+        _isUploading = true;
+        _uploadStatus = 'Uploading...';
+      });
+
+      // Use Amplify's uploadFile functionality
+      final uploadResult = await Amplify.Storage.uploadFile(
+        localFile: AWSFile.fromPath(result.files.single.path!),
+        path:  StoragePath.fromString('public/${result.files.single.name}'),
+        options: const StorageUploadFileOptions(
+          metadata: {'key': 'value'},
+          pluginOptions: S3UploadFilePluginOptions(
+            getProperties: true,
+          ),
+        ),
+      ).result;
+
+      setState(() {
+        _isUploading = false;
+        _uploadStatus = 'Upload successful!';
+        _uploadedFileKey = uploadResult.uploadedItem.path;
+      });
+
+      safePrint('Uploaded file: ${uploadResult.uploadedItem.path}');
+    } on StorageException catch (e) {
+      safePrint('Error uploading file: ${e.message}');
+      setState(() {
+        _isUploading = false;
+        _uploadStatus = 'Upload failed: ${e.message}';
       });
     }
   }
 
-  Future<void> uploadFile() async {
-  // Select a file from the device
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    withData: false,
-    // Ensure to get file stream for better performance
-    withReadStream: true,
-    allowedExtensions: ['jpg', 'png', 'gif', 'mp4'],
-  );
-
-  if (result == null) {
-    safePrint('No file selected');
-    return;
-  }
-
-  // Upload file using the filename
-  final platformFile = result.files.single;
-  try {
-    final result = await Amplify.Storage.uploadFile(
-      localFile: AWSFile.fromStream(
-        platformFile.readStream!,
-        size: platformFile.size,
-      ),
-      path: StoragePath.fromString('public/${platformFile.name}'),
-      onProgress: (progress) {
-        safePrint('Fraction completed: ${progress.fractionCompleted}');
-      },
-    ).result;
-    safePrint('Successfully uploaded file: ${result.uploadedItem.path}');
-  } on StorageException catch (e) {
-    safePrint(e.message);
-  }
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,20 +123,19 @@ class _MediaUploadPageState extends State<MediaUploadPage>{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                if (_mediaFile != null)
+                if (_uploadedFileKey != null)
                   Text(
-                    'Media Selected: ${_mediaFile?.path.split('/').last}',
+                    'Uploaded file key: $_uploadedFileKey',
                     style: const TextStyle(color: Colors.white),
                   ),
                 ElevatedButton(
-                  onPressed: _pickmedia,
-                  child: const Text('Pick Media'),
+                  onPressed: _isUploading ? null : _uploadMedia,
+                  child: const Text('Upload Media'),
                 ),
-                if (_mediaFile != null)
-                  ElevatedButton(
-                    onPressed: uploadFile,
-                    child: const Text('Upload Media'),
-                  ),
+                Text(
+                  _uploadStatus,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ],
             ),
           ),

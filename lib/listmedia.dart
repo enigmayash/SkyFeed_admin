@@ -23,19 +23,53 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
 
   Future<void> _fetchUploadedMedia() async {
     try {
-    final result = await Amplify.Storage.getUrl(
-      path: const StoragePath.fromString('public/example.txt'),
-      options: const StorageGetUrlOptions(
-        pluginOptions: S3GetUrlPluginOptions(
-          validateObjectExistence: true,
-          expiresIn: Duration(days: 1),
-        ),
-      ),
-    ).result;
-    safePrint('url: ${result.url}');
-  } on StorageException catch (e) {
-    safePrint(e.message);
-  }
+      List<String> fetchedUrls = [];
+      String? nextToken;
+      bool hasNextPage;
+      do {
+        final result = await Amplify.Storage.list(
+          path: const StoragePath.fromString('public/'),
+          options: StorageListOptions(
+            pageSize: 50,
+            nextToken: nextToken,
+            pluginOptions: const S3ListPluginOptions(
+              excludeSubPaths: true,
+              delimiter: '/',
+            ),
+          ),
+        ).result;
+        
+        // Process the items and add them to fetchedUrls
+        for (var item in result.items) {
+          final key = item.path;
+           
+            // Generate a pre-signed URL for each item
+            final urlResult = await Amplify.Storage.getUrl(
+              path: StoragePath.fromString(key),
+              options: const StorageGetUrlOptions(
+                pluginOptions: S3GetUrlPluginOptions(
+                  expiresIn: Duration(hours: 1),
+                ),
+              ),
+            ).result;
+            fetchedUrls.add(urlResult.url.toString());
+          }
+        
+        
+        nextToken = result.nextToken;
+        hasNextPage = result.hasNextPage;
+      } while (hasNextPage);
+
+      setState(() {
+        _mediaURLs = fetchedUrls;
+        _isLoading = false;
+      });
+    } on StorageException catch (e) {
+      print('Error fetching media: ${e.message}');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -50,7 +84,7 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
             if (context.canPop()) {
               context.pop();
             } else {
-              context.go('/');  // Navigate to home if can't pop
+              context.go('/'); // Navigate to home if can't pop
             }
           },
         ),
@@ -67,7 +101,7 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
               ),
             ),
           ),
-          
+
           // App Name (top left) and Page Name (top right)
           const Positioned(
             top: 40,
@@ -75,7 +109,7 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children:  [
+              children: [
                 Text(
                   'SkyFeed',
                   style: TextStyle(
