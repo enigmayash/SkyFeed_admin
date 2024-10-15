@@ -74,10 +74,11 @@ class HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Navigation buttons
+          // Navigation buttons aligned at the top
           Positioned(
             top: 50,
             right: 20,
+            left: 20, // Added to allow space for buttons
             child: _isSignedIn ? _buildSignedInButtons() : _buildSignedOutButtons(),
           ),
         ],
@@ -86,22 +87,26 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildSignedInButtons() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Use spaceEvenly for equal spacing
       children: [
-        ElevatedButton(
-          onPressed: () => context.go('/upload-media'),
-          child: const Text('Upload Media'),
+        Expanded( // Wrap buttons in Expanded to prevent overflow
+          child: ElevatedButton(
+            onPressed: () => context.go('/upload-media'),
+            child: const Text('Upload Media'),
+          ),
         ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () => context.go('/list-media'),
-          child: const Text('View Media'),
+        Expanded( // Wrap buttons in Expanded to prevent overflow
+          child: ElevatedButton(
+            onPressed: () => context.go('/list-media'),
+            child: const Text('View Media'),
+          ),
         ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: _signOut,
-          child: const Text('Sign Out'),
+        Expanded( // Wrap buttons in Expanded to prevent overflow
+          child: ElevatedButton(
+            onPressed: _signOut,
+            child: const Text('Sign Out'),
+          ),
         ),
       ],
     );
@@ -109,6 +114,7 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildSignedOutButtons() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center, // Center the buttons
       children: [
         TextButton(
           onPressed: () => context.go('/signin'),

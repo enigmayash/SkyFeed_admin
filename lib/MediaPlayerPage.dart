@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class Mediaplayerpage extends StatefulWidget {
+class MediaPlayerPage extends StatefulWidget {
   final String videoUrl;
-  const Mediaplayerpage({super.key, required this.videoUrl});
+
+  const MediaPlayerPage({Key? key, required this.videoUrl}) : super(key: key);
 
   @override
-  MediaplayerpageState createState() => MediaplayerpageState();
+  _MediaPlayerPageState createState() => _MediaPlayerPageState();
 }
 
-class MediaplayerpageState extends State<Mediaplayerpage> {
+class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late VideoPlayerController _controller;
-  bool _isPlaying = false;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
-        setState(() {
-          _isLoading=false;
-          _isPlaying = true;
-        });
-        _controller.play();
+        setState(() {}); // Update the UI when the video is initialized
       });
   }
 
@@ -38,33 +33,46 @@ class MediaplayerpageState extends State<Mediaplayerpage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Media Player'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
+      extendBodyBehindAppBar: true,
+      body: SingleChildScrollView( // Wrap the body in a SingleChildScrollView
+        child: Column(
+          children: [
+            if (_controller.value.isInitialized)
+              AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
+              )
+            else
+              const Center(child: CircularProgressIndicator()),
+
+            // Add any additional content here
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _controller.value.isPlaying
+                        ? _controller.pause()
+                        : _controller.play();
+                  });
+                },
+                child: Icon(
+                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
                 ),
-                const SizedBox(height: 20),
-                IconButton(
-                  icon: Icon(
-                    _isPlaying ? Icons.pause : Icons.play_arrow,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      if (_isPlaying) {
-                        _controller.pause();
-                      } else {
-                        _controller.play();
-                      }
-                      _isPlaying = !_isPlaying;
-                    });
-                  },
-                ),
-              ],
+              ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }

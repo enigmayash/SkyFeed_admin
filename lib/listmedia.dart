@@ -3,9 +3,10 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'MediaPlayerPage.dart';
 import 'package:go_router/go_router.dart';
-import 'package:get_thumbnail_video/video_thumbnail.dart';
 import 'dart:io';
+import 'package:get_thumbnail_video/video_thumbnail.dart';
 import 'package:get_thumbnail_video/index.dart';
+
 
 class ListmediaUploadPage extends StatefulWidget {
   const ListmediaUploadPage({super.key});
@@ -56,15 +57,7 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
               ),
             ).result;
 
-            // Generate thumbnail for video
-            final thumbnail = await VideoThumbnail.thumbnailFile(
-              video: urlResult.url.toString(),
-              imageFormat: ImageFormat.JPEG,
-              maxWidth: 128, // specify the width of the thumbnail
-              quality: 75,
-            );
-
-            fetchedUrls.add(thumbnail.path); // Store thumbnail path instead of URL
+            fetchedUrls.add(urlResult.url.toString()); // Store the video URL directly
           }
         
         
@@ -82,6 +75,22 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
         _isLoading = false;
       });
     }
+  }
+
+  // Function to get and display video thumbnail
+  Future<Widget> _buildVideoThumbnail(String videoPath) async {
+    final thumbnail = await VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      imageFormat: ImageFormat.JPEG, // Correct reference
+      maxWidth: 128, // specify the width of the thumbnail
+      quality: 75,
+    );
+
+    return SizedBox(
+      width: 128,
+      height: 128,
+      child: Image.file(File(thumbnail.path)),
+    );
   }
 
   @override
@@ -115,22 +124,27 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
           ),
 
           // App Name (top left) and Page Name (top right)
-          const Positioned(
+          Positioned(
             top: 40,
             left: 20,
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'SkyFeed',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                GestureDetector( // Make the app name clickable
+                  onTap: () {
+                    context.go('/'); // Navigate to home page
+                  },
+                  child: const Text(
+                    'SkyFeed',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
-                Text(
+                const Text(
                   'Uploaded Media',
                   style: TextStyle(
                     fontSize: 20,
@@ -157,8 +171,11 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
                         itemCount: _mediaURLs.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            leading:
-                                Image.file(File(_mediaURLs[index]), width: 50, height: 50), // Display thumbnail
+                            leading: SizedBox( // Use SizedBox to define a fixed size
+                              width: 50, // Set a fixed width
+                              height: 50, // Set a fixed height
+                              child: Image.file(File(_mediaURLs[index]), fit: BoxFit.cover), // Display video thumbnail
+                            ),
                             title: Text(
                               'Media ${index + 1}',
                               style: const TextStyle(color: Colors.white),
@@ -167,7 +184,7 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Mediaplayerpage(
+                                  builder: (context) => MediaPlayerPage(
                                     videoUrl: _mediaURLs[index],
                                   ),
                                 ),

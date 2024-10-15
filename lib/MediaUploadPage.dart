@@ -91,22 +91,27 @@ class MediaUploadPageState extends State<MediaUploadPage>{
           ),
           
           // App Name (top left) and Page Name (top right)
-          const Positioned(
+          Positioned(
             top: 40,
             left: 20,
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:  [
-                Text(
-                  'SkyFeed',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                GestureDetector( // Make the app name clickable
+                  onTap: () {
+                    context.go('/'); // Navigate to home page
+                  },
+                  child: const Text(
+                    'SkyFeed',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
-                Text(
+                const Text(
                   'Upload Media',
                   style: TextStyle(
                     fontSize: 20,
