@@ -7,15 +7,15 @@ class ConfirmSignUpPage extends StatefulWidget {
   final String username;
 
   const ConfirmSignUpPage({
-    Key? key,
+    super.key, // Changed to pass key to the superclass
     required this.username,
-  }) : super(key: key);
+  });
 
   @override
-  _ConfirmSignUpPageState createState() => _ConfirmSignUpPageState();
+  ConfirmSignUpPageState createState() => ConfirmSignUpPageState();
 }
 
-class _ConfirmSignUpPageState extends State<ConfirmSignUpPage> {
+class ConfirmSignUpPageState extends State<ConfirmSignUpPage> {
   final _confirmationCodeController = TextEditingController();
 
   Future<void> _confirmSignUp() async {

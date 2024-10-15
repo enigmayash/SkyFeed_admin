@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:aws_common/aws_common.dart';
 import 'package:file_picker/file_picker.dart';
 
 
@@ -10,9 +9,9 @@ class MediaUploadPage extends StatefulWidget{
   const MediaUploadPage({super.key});
 
   @override 
-  _MediaUploadPageState createState() => _MediaUploadPageState();
+  MediaUploadPageState createState() => MediaUploadPageState();
 }
-class _MediaUploadPageState extends State<MediaUploadPage>{
+class MediaUploadPageState extends State<MediaUploadPage>{
   bool _isUploading = false;
   String _uploadStatus = '';
   String? _uploadedFileKey;

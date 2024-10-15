@@ -3,15 +3,18 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'MediaPlayerPage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:get_thumbnail_video/video_thumbnail.dart';
+import 'dart:io';
+import 'package:get_thumbnail_video/index.dart';
 
 class ListmediaUploadPage extends StatefulWidget {
   const ListmediaUploadPage({super.key});
 
   @override
-  _ListmediaUploadPageState createState() => _ListmediaUploadPageState();
+  ListmediaUploadPageState createState() => ListmediaUploadPageState();
 }
 
-class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
+class ListmediaUploadPageState extends State<ListmediaUploadPage> {
   List<String> _mediaURLs = [];
   bool _isLoading = true;
 
@@ -52,7 +55,16 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
                 ),
               ),
             ).result;
-            fetchedUrls.add(urlResult.url.toString());
+
+            // Generate thumbnail for video
+            final thumbnail = await VideoThumbnail.thumbnailFile(
+              video: urlResult.url.toString(),
+              imageFormat: ImageFormat.JPEG,
+              maxWidth: 128, // specify the width of the thumbnail
+              quality: 75,
+            );
+
+            fetchedUrls.add(thumbnail.path); // Store thumbnail path instead of URL
           }
         
         
@@ -145,13 +157,11 @@ class _ListmediaUploadPageState extends State<ListmediaUploadPage> {
                         itemCount: _mediaURLs.length,
                         itemBuilder: (context, index) {
                           return ListTile(
+                            leading:
+                                Image.file(File(_mediaURLs[index]), width: 50, height: 50), // Display thumbnail
                             title: Text(
                               'Media ${index + 1}',
                               style: const TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              _mediaURLs[index],
-                              style: const TextStyle(color: Colors.white70),
                             ),
                             onTap: () {
                               Navigator.push(

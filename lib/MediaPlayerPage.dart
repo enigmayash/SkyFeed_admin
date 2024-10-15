@@ -6,10 +6,10 @@ class Mediaplayerpage extends StatefulWidget {
   const Mediaplayerpage({super.key, required this.videoUrl});
 
   @override
-  _MediaplayerpageState createState() => _MediaplayerpageState();
+  MediaplayerpageState createState() => MediaplayerpageState();
 }
 
-class _MediaplayerpageState extends State<Mediaplayerpage> {
+class MediaplayerpageState extends State<Mediaplayerpage> {
   late VideoPlayerController _controller;
   bool _isPlaying = false;
   bool _isLoading = true;
