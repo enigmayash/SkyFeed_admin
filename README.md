@@ -3,6 +3,7 @@
 SkyFeed is a video streaming platform designed to provide a seamless video-watching experience, similar to Netflix and Amazon Prime Video. This application allows users to sign up, log in, upload their own videos, and stream content from various categories. It leverages Flutter for the frontend and AWS services for cloud-based video storage, streaming, and processing.
 
 **Features**
+
 User Authentication: Users can sign up and log in using AWS Cognito, ensuring secure access.
 
 Video Upload & Storage: Users can upload videos from their devices, which are stored securely in AWS S3.
