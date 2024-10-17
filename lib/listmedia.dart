@@ -4,8 +4,6 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'MediaPlayerPage.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:io';
-import 'package:get_thumbnail_video/video_thumbnail.dart';
-import 'package:get_thumbnail_video/index.dart';
 
 
 class ListmediaUploadPage extends StatefulWidget {
@@ -75,22 +73,6 @@ class ListmediaUploadPageState extends State<ListmediaUploadPage> {
         _isLoading = false;
       });
     }
-  }
-
-  // Function to get and display video thumbnail
-  Future<Widget> _buildVideoThumbnail(String videoPath) async {
-    final thumbnail = await VideoThumbnail.thumbnailFile(
-      video: videoPath,
-      imageFormat: ImageFormat.JPEG, // Correct reference
-      maxWidth: 128, // specify the width of the thumbnail
-      quality: 75,
-    );
-
-    return SizedBox(
-      width: 128,
-      height: 128,
-      child: Image.file(File(thumbnail.path)),
-    );
   }
 
   @override

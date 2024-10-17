@@ -43,7 +43,7 @@ dependencies:
   go_router: ^14.3.0
   amazon_cognito_identity_dart_2: ^3.6.5 
   aws_common: ^0.7.3
-  get_thumbnail_video: ^0.6.1
+  # get_thumbnail_video: ^0.6.1
 
 
 dev_dependencies:
